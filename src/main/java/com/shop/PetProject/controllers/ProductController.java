@@ -9,7 +9,6 @@ import com.shop.PetProject.utils.ProductNotFoundException;
 import com.shop.PetProject.utils.ProductValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
