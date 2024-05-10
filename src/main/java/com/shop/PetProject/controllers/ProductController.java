@@ -10,12 +10,14 @@ import com.shop.PetProject.utils.ProductValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,13 @@ public class ProductController {
         return productService.getProduct().stream()
                 .map(product -> conversionService.convert(product, ProductDTO.class))
                 .toList();
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<List<ProductDTO>> getAll(@RequestParam(defaultValue = "10") int page, @RequestParam(defaultValue = "10") int size) {
+        Page<ProductDTO> plantPage = productService.getProductsPaginated(page, size);
+        List<ProductDTO> plants = plantPage.getContent();
+        return ResponseEntity.ok(plants);
     }
 
 

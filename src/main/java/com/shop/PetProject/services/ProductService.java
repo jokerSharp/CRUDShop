@@ -1,9 +1,14 @@
 package com.shop.PetProject.services;
 
+import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.ProductRepository;
 import com.shop.PetProject.utils.ProductNotFoundException;
 import lombok.AllArgsConstructor;
+import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +21,13 @@ import java.util.List;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ConversionService conversionService;
+
+
+    public Page<ProductDTO> getProductsPaginated(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findAll(pageable).map(product -> conversionService.convert(product, ProductDTO.class));
+    }
 
     public List<ProductEntity> getProduct() {
         return productRepository.findAll();
