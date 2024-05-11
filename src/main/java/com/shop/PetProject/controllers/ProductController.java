@@ -1,15 +1,10 @@
 package com.shop.PetProject.controllers;
 
 import com.shop.PetProject.dtos.ProductDTO;
-import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.services.ProductService;
-import com.shop.PetProject.utils.ProductAlreadyExistsException;
-import com.shop.PetProject.utils.ProductErrorResponse;
-import com.shop.PetProject.utils.ProductNotFoundException;
-import com.shop.PetProject.utils.ProductValidator;
+import com.shop.PetProject.utils.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +12,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,21 +21,13 @@ import java.util.stream.Collectors;
 public class ProductController {
 
     private final ProductService productService;
-    private final ConversionService conversionService;
     private final ProductValidator productValidator;
 
-    @GetMapping
-    public List<ProductDTO> getAll() {
-        return productService.getProduct().stream()
-                .map(product -> conversionService.convert(product, ProductDTO.class))
-                .toList();
-    }
-
-    @GetMapping("/page")
-    public ResponseEntity<List<ProductDTO>> getAll(@RequestParam(defaultValue = "10") int page, @RequestParam(defaultValue = "10") int size) {
-        Page<ProductDTO> plantPage = productService.getProductsPaginated(page, size);
-        List<ProductDTO> plants = plantPage.getContent();
-        return ResponseEntity.ok(plants);
+    @GetMapping()
+    public ResponseEntity<List<ProductDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Page<ProductDTO> productPage = productService.getProducts(page, size);
+        List<ProductDTO> products = productPage.getContent();
+        return ResponseEntity.ok(products);
     }
 
 
@@ -55,17 +41,17 @@ public class ProductController {
                     .collect(Collectors.joining());
             throw new ProductAlreadyExistsException(errorMsg);
         }
-        productService.saveProduct(conversionService.convert(productDTO, ProductEntity.class));
+        productService.saveProduct(productDTO);
     }
 
     @GetMapping("/{name}")
     public ProductDTO details(@PathVariable(name = "name") String name) {
-        return conversionService.convert(productService.getProductByName(name), ProductDTO.class);
+        return productService.getProductByName(name);
     }
 
     @PutMapping("/{name}")
     public void update(@PathVariable(name = "name") String name, @RequestBody ProductDTO productDTO) {
-        productService.saveProduct(conversionService.convert(productDTO, ProductEntity.class));
+        productService.updateProduct(name, productDTO);
     }
 
     @DeleteMapping("/{name}")
@@ -82,6 +68,13 @@ public class ProductController {
 
     @ExceptionHandler
     private ResponseEntity<ProductErrorResponse> handleException(ProductNotFoundException e) {
+        ProductErrorResponse response = new ProductErrorResponse(e.getMessage(), System.currentTimeMillis());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    private ResponseEntity<ProductErrorResponse> handleException(ProductIntegrityViolationException e) {
         ProductErrorResponse response = new ProductErrorResponse(e.getMessage(), System.currentTimeMillis());
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
