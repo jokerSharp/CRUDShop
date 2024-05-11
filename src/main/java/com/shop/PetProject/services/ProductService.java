@@ -3,6 +3,7 @@ package com.shop.PetProject.services;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.ProductRepository;
+import com.shop.PetProject.utils.ProductIntegrityViolationException;
 import com.shop.PetProject.utils.ProductNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.core.convert.ConversionService;
@@ -24,38 +25,46 @@ public class ProductService {
     private final ConversionService conversionService;
 
 
-    public Page<ProductDTO> getProductsPaginated(int page, int size) {
+    public Page<ProductDTO> getProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findAll(pageable).map(product -> conversionService.convert(product, ProductDTO.class));
     }
 
-    public List<ProductEntity> getProduct() {
+    public List<ProductEntity> getProducts() {
         return productRepository.findAll();
     }
 
-    public ProductEntity getProductByName(String name) {
-        return productRepository.findByName(name).stream()
+    public ProductDTO getProductByName(String name) {
+        return conversionService.convert(productRepository.findByName(name).stream()
                 .findFirst()
-                .orElse(null);
+                .orElse(null), ProductDTO.class);
     }
 
     @Transactional
-    public void saveProduct(ProductEntity productEntity) {
+    public void saveProduct(ProductDTO productDTO) {
+        ProductEntity productEntity = conversionService.convert(productDTO, ProductEntity.class);
         productEntity.setCreationDate(LocalDateTime.now());
         productEntity.setQuantityChange(LocalDateTime.now());
         productRepository.save(productEntity);
     }
 
     @Transactional
-    public void updateProduct(String name, ProductEntity updatedProductEntity) {
-        ProductEntity productEntity = productRepository.findByName(name).stream()
+    public void updateProduct(String name, ProductDTO productDTO) {
+        ProductEntity updatedProductEntity = productRepository.findByName(name).stream()
                 .findFirst()
                 .orElseThrow(() -> new ProductNotFoundException("Product with this name is not found!"));
-        updatedProductEntity.setId(productEntity.getId());
-        updatedProductEntity.setCreationDate(productEntity.getCreationDate());
-        if (productEntity.getQuantity() == updatedProductEntity.getQuantity()) {
+        if (productDTO.quantity() != updatedProductEntity.getQuantity()) {
             updatedProductEntity.setQuantityChange(LocalDateTime.now());
         }
+        if (!productDTO.name().equals(updatedProductEntity.getName())
+        || !productDTO.article().equals(updatedProductEntity.getArticle())) {
+            throw new ProductIntegrityViolationException("Product article or product name should not be changed");
+        }
+        updatedProductEntity.setPrice(productDTO.price());
+        updatedProductEntity.setDescription(productDTO.description());
+        updatedProductEntity.setCategory(productDTO.category());
+        updatedProductEntity.setQuantity(productDTO.quantity());
+
         productRepository.save(updatedProductEntity);
     }
 

@@ -6,16 +6,16 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductDTOToEntityConverter implements Converter<ProductDTO, ProductEntity> {
-
+public class ProductRecordToEntityConverter implements Converter<ProductDTO, ProductEntity> {
+    @Override
     public ProductEntity convert(ProductDTO source) {
         return ProductEntity.builder()
-                .name(source.getName())
-                .price(source.getPrice())
-                .description(source.getDescription())
-                .category(source.getCategory())
-                .quantity(source.getQuantity())
-                .article(source.getArticle())
+                .name(source.name())
+                .price(source.price())
+                .description(source.description())
+                .category(source.category())
+                .quantity(source.quantity())
+                .article(source.article())
                 .build();
     }
 }

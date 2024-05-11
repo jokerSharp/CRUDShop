@@ -6,8 +6,8 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductEntityToDTOConverter implements Converter<ProductEntity, ProductDTO> {
-
+public class ProductEntityToRecordConverter implements Converter<ProductEntity, ProductDTO> {
+    @Override
     public ProductDTO convert(ProductEntity source) {
         return ProductDTO.builder()
                 .name(source.getName())

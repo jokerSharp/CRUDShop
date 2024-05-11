@@ -3,10 +3,10 @@ package com.shop.PetProject.utils;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.services.ProductService;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
-import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
@@ -27,7 +27,7 @@ public class ProductValidator implements Validator {
         ValidationUtils.rejectIfEmpty(errors, "category", "", "Category should not be empty");
         ValidationUtils.rejectIfEmpty(errors, "quantity", "", "Quantity should not be empty");
         ValidationUtils.rejectIfEmpty(errors, "article", "", "article should not be empty");
-        if (productService.getProductByName(productDTO.getName()) != null) {
+        if (productService.getProductByName(productDTO.name()) != null) {
             errors.rejectValue("name", "", "Product with this name already exists");
         }
     }
