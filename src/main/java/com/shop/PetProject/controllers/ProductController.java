@@ -2,11 +2,12 @@ package com.shop.PetProject.controllers;
 
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.services.ProductService;
-import com.shop.PetProject.utils.*;
+import com.shop.PetProject.utils.ProductAlreadyExistsException;
+import com.shop.PetProject.utils.ProductNotFoundException;
+import com.shop.PetProject.utils.ProductValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -46,7 +47,11 @@ public class ProductController {
 
     @GetMapping("/{name}")
     public ProductDTO details(@PathVariable(name = "name") String name) {
-        return productService.getProductByName(name);
+        ProductDTO productDTO = productService.getProductByName(name);
+        if (productDTO == null) {
+            throw new ProductNotFoundException("Product with this name is not found!");
+        }
+        return productDTO;
     }
 
     @PutMapping("/{name}")
@@ -57,26 +62,5 @@ public class ProductController {
     @DeleteMapping("/{name}")
     public void deleteByName(@PathVariable(name = "name") String name) {
         productService.deleteProductByName(name);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ProductErrorResponse> handleException(ProductAlreadyExistsException e) {
-        ProductErrorResponse response = new ProductErrorResponse(e.getMessage(), System.currentTimeMillis());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ProductErrorResponse> handleException(ProductNotFoundException e) {
-        ProductErrorResponse response = new ProductErrorResponse(e.getMessage(), System.currentTimeMillis());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    private ResponseEntity<ProductErrorResponse> handleException(ProductIntegrityViolationException e) {
-        ProductErrorResponse response = new ProductErrorResponse(e.getMessage(), System.currentTimeMillis());
-
-        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
