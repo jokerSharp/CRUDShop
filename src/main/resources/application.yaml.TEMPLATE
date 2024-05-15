@@ -1,5 +1,8 @@
 spring:
   application:
     name: PetProject
+    scheduling:
+      enabled: false
+      period: 30000
   profiles:
     active: local
