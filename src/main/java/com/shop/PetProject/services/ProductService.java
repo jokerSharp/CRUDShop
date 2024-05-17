@@ -3,6 +3,7 @@ package com.shop.PetProject.services;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.ProductRepository;
+import com.shop.PetProject.utils.ProductAlreadyExistsException;
 import com.shop.PetProject.utils.ProductIntegrityViolationException;
 import com.shop.PetProject.utils.ProductNotFoundException;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,15 +39,21 @@ public class ProductService {
     public ProductDTO getProductByName(String name) {
         return conversionService.convert(productRepository.findByName(name).stream()
                 .findFirst()
-                .orElse(null), ProductDTO.class);
+                .orElseThrow(() -> new ProductNotFoundException("Product with this name is not found!")), ProductDTO.class);
     }
 
     @Transactional
     public void saveProduct(ProductDTO productDTO) {
-        ProductEntity productEntity = conversionService.convert(productDTO, ProductEntity.class);
-        productEntity.setCreationDate(LocalDateTime.now());
-        productEntity.setQuantityChange(LocalDateTime.now());
-        productRepository.save(productEntity);
+        Optional<ProductEntity> product = productRepository.findByName(productDTO.name()).stream()
+                .findFirst();
+        if (product.isPresent()) {
+            throw new ProductAlreadyExistsException("Product with this name already exists");
+        } else {
+            ProductEntity productEntity = conversionService.convert(productDTO, ProductEntity.class);
+            productEntity.setCreationDate(LocalDateTime.now());
+            productEntity.setQuantityChange(LocalDateTime.now());
+            productRepository.save(productEntity);
+        }
     }
 
     @Transactional
