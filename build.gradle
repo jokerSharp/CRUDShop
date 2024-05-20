@@ -31,6 +31,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.liquibase:liquibase-core:4.27.0'
 	implementation 'com.h2database:h2:2.2.224'
+	testImplementation 'io.rest-assured:rest-assured:5.4.0'
 }
 
 tasks.named('test') {
