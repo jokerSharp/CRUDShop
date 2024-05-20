@@ -7,6 +7,8 @@ import com.shop.PetProject.models.ProductEntity;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import static com.shop.PetProject.testUtils.InputUtils.*;
+
 public class ProductBuilder {
 
     public static ProductEntity getProductEntity() {
@@ -31,6 +33,17 @@ public class ProductBuilder {
                 .category(Categories.ELECTRONICS)
                 .quantity(111)
                 .article(1230987)
+                .build();
+    }
+
+    public static ProductDTO getRandomProductDTO() {
+        return ProductDTO.builder()
+                .name(getRandomShortString())
+                .price(Double.valueOf(getRandomPriceWithCents()))
+                .description(getRandomShortString())
+                .category(getRandomValueFromEnum(Categories.class))
+                .quantity(getRandomPositiveInt())
+                .article(getRandomPositiveInt())
                 .build();
     }
 }

@@ -3,7 +3,7 @@ package com.shop.PetProject.services;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.ProductRepository;
-import com.shop.PetProject.testUtils.builders.converters.ManualConverter;
+import com.shop.PetProject.testUtils.converters.ManualConverter;
 import com.shop.PetProject.utils.ProductNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

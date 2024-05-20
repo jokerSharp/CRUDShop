@@ -1,4 +1,4 @@
-package com.shop.PetProject.testUtils.builders.converters;
+package com.shop.PetProject.testUtils.converters;
 
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
