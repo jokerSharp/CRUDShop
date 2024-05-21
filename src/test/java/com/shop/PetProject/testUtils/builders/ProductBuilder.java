@@ -46,4 +46,15 @@ public class ProductBuilder {
                 .article(getRandomPositiveInt())
                 .build();
     }
+
+    public static ProductDTO getEmptyProductDTO() {
+        return ProductDTO.builder()
+                .name(null)
+                .price(null)
+                .description(null)
+                .category(null)
+                .quantity(null)
+                .article(null)
+                .build();
+    }
 }

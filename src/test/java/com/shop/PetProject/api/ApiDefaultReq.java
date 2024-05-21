@@ -1,7 +1,6 @@
 package com.shop.PetProject.api;
 
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 
