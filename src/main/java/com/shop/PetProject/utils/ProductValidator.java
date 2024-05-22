@@ -1,18 +1,17 @@
 package com.shop.PetProject.utils;
 
 import com.shop.PetProject.dtos.ProductDTO;
-import com.shop.PetProject.services.ProductService;
+import com.shop.PetProject.repositories.ProductRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
 @AllArgsConstructor
 public class ProductValidator implements Validator {
 
-    private final ProductService productService;
+    private final ProductRepository productRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -22,13 +21,26 @@ public class ProductValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         ProductDTO productDTO = (ProductDTO) target;
-        ValidationUtils.rejectIfEmpty(errors, "name", "", "Name should not be empty");
-        ValidationUtils.rejectIfEmpty(errors, "price", "", "Price should not be empty");
-        ValidationUtils.rejectIfEmpty(errors, "category", "", "Category should not be empty");
-        ValidationUtils.rejectIfEmpty(errors, "quantity", "", "Quantity should not be empty");
-        ValidationUtils.rejectIfEmpty(errors, "article", "", "article should not be empty");
-        if (productService.getProductByName(productDTO.name()) != null) {
-            errors.rejectValue("name", "", "Product with this name already exists");
+        if (productDTO.name() == null) {
+            errors.rejectValue("name", "", "Name should not be empty");
+        } else if (productRepository.findByName(productDTO.name()).stream()
+                .findFirst().isPresent()) {
+            throw new ProductAlreadyExistsException("Product with this name already exists");
+        }
+        if (productDTO.article() == null) {
+            errors.rejectValue("article", "", "Article should not be empty");
+        } else if (productRepository.findByArticle(productDTO.article()).stream()
+                .findFirst().isPresent()) {
+            throw new ProductAlreadyExistsException("Product with this article already exists");
+        }
+        if (productDTO.price() == null) {
+            errors.rejectValue("price", "", "Price should not be empty");
+        }
+        if (productDTO.category() == null) {
+            errors.rejectValue("category", "", "Category should not be empty");
+        }
+        if (productDTO.quantity() == null) {
+            errors.rejectValue("quantity", "", "Quantity should not be empty");
         }
     }
 }

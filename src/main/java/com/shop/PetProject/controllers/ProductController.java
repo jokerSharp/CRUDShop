@@ -34,23 +34,20 @@ public class ProductController {
 
     @PostMapping
     public void save(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult) {
-//        productValidator.validate(productDTO, bindingResult);
-//        if (bindingResult.hasErrors()) {
-//            List<FieldError> errors = bindingResult.getFieldErrors();
-//            String errorMsg = errors.stream()
-//                    .map(error -> error.getField() + " - " + error.getDefaultMessage() + ";")
-//                    .collect(Collectors.joining());
-//            throw new ProductAlreadyExistsException(errorMsg);
-//        }
+        productValidator.validate(productDTO, bindingResult);
+        if (bindingResult.hasErrors()) {
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            String errorMsg = errors.stream()
+                    .map(error -> error.getField() + " - " + error.getDefaultMessage() + ";")
+                    .collect(Collectors.joining());
+            throw new ProductAlreadyExistsException(errorMsg);
+        }
         productService.saveProduct(productDTO);
     }
 
     @GetMapping("/{name}")
     public ProductDTO details(@PathVariable(name = "name") String name) {
         ProductDTO productDTO = productService.getProductByName(name);
-        if (productDTO == null) {
-            throw new ProductNotFoundException("Product with this name is not found!");
-        }
         return productDTO;
     }
 

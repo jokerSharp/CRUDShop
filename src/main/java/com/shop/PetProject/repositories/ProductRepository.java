@@ -17,6 +17,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
     List<ProductEntity> findByName(String name);
 
+    List<ProductEntity> findByArticle(int article);
+
     @Modifying
     @Query(value = "update product p set p.price = p.price * 1.1",
             nativeQuery = true)

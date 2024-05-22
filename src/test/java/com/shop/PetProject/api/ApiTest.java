@@ -1,11 +1,7 @@
 package com.shop.PetProject.api;
 
-import com.shop.PetProject.dtos.ProductDTO;
 import io.restassured.response.ValidatableResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.function.BooleanSupplier;
 
 import static com.shop.PetProject.api.ApiSettings.createProductDTO;
 import static com.shop.PetProject.testUtils.builders.ProductBuilder.getEmptyProductDTO;
