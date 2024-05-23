@@ -3,7 +3,6 @@ package com.shop.PetProject.controllers;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.services.ProductService;
 import com.shop.PetProject.utils.ProductAlreadyExistsException;
-import com.shop.PetProject.utils.ProductNotFoundException;
 import com.shop.PetProject.utils.ProductValidator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,7 @@ public class ProductController {
         return productDTO;
     }
 
-    @PutMapping("/{name}")
+    @PatchMapping("/{name}")
     public void update(@PathVariable(name = "name") String name, @RequestBody ProductDTO productDTO) {
         productService.updateProduct(name, productDTO);
     }
