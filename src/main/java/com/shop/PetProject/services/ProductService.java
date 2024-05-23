@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -64,15 +65,16 @@ public class ProductService {
         if (productDTO.quantity() != updatedProductEntity.getQuantity()) {
             updatedProductEntity.setQuantityChange(LocalDateTime.now());
         }
-        if (!productDTO.name().equals(updatedProductEntity.getName())
-        || !productDTO.article().equals(updatedProductEntity.getArticle())) {
-            throw new ProductIntegrityViolationException("Product article or product name should not be changed");
+        if (productDTO.name() != null || productDTO.article() != null) {
+            if (!Objects.equals(updatedProductEntity.getName(), productDTO.name())
+            || !Objects.equals(productDTO.article(), updatedProductEntity.getArticle())) {
+                throw new ProductIntegrityViolationException("Product article or product name should not be changed");
+            }
         }
-        updatedProductEntity.setPrice(productDTO.price());
-        updatedProductEntity.setDescription(productDTO.description());
-        updatedProductEntity.setCategory(productDTO.category());
-        updatedProductEntity.setQuantity(productDTO.quantity());
-
+        if (productDTO.price() != null) updatedProductEntity.setPrice(productDTO.price());
+        if (productDTO.description() != null) updatedProductEntity.setDescription(productDTO.description());
+        if (productDTO.category() != null) updatedProductEntity.setCategory(productDTO.category());
+        if (productDTO.quantity() != null) updatedProductEntity.setQuantity(productDTO.quantity());
         productRepository.save(updatedProductEntity);
     }
 
