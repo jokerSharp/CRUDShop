@@ -16,6 +16,7 @@ public class ProductEntityToRecordConverter implements Converter<ProductEntity, 
                 .category(source.getCategory())
                 .quantity(source.getQuantity())
                 .article(source.getArticle())
+                .isAvailable(source.getIsAvailable())
                 .build();
     }
 }

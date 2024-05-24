@@ -2,16 +2,18 @@ package com.shop.PetProject.utils;
 
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.repositories.ProductRepository;
-import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 @Component
-@AllArgsConstructor
 public class ProductValidator implements Validator {
 
     private final ProductRepository productRepository;
+
+    public ProductValidator(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
 
     @Override
     public boolean supports(Class<?> clazz) {

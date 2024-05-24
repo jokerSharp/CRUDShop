@@ -1,12 +1,12 @@
 package com.shop.PetProject.services;
 
 import com.shop.PetProject.dtos.ProductDTO;
+import com.shop.PetProject.dtos.ProductFilter;
 import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.ProductRepository;
 import com.shop.PetProject.utils.ProductAlreadyExistsException;
 import com.shop.PetProject.utils.ProductIntegrityViolationException;
 import com.shop.PetProject.utils.ProductNotFoundException;
-import lombok.AllArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,12 +21,22 @@ import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
-@AllArgsConstructor
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ConversionService conversionService;
 
+    public ProductService(ProductRepository productRepository, ConversionService conversionService) {
+        this.productRepository = productRepository;
+        this.conversionService = conversionService;
+    }
+
+
+    public List<ProductDTO> getProducts(ProductFilter filter) {
+        return productRepository.findAllByFilter(filter).stream()
+                .map(product -> conversionService.convert(product, ProductDTO.class))
+                .toList();
+    }
 
     public Page<ProductDTO> getProducts(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

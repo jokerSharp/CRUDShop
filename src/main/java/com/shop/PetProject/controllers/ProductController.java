@@ -1,11 +1,11 @@
 package com.shop.PetProject.controllers;
 
 import com.shop.PetProject.dtos.ProductDTO;
+import com.shop.PetProject.dtos.ProductFilter;
 import com.shop.PetProject.services.ProductService;
 import com.shop.PetProject.utils.ProductAlreadyExistsException;
 import com.shop.PetProject.utils.ProductValidator;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,17 +17,27 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/product")
-@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
     private final ProductValidator productValidator;
+
+    public ProductController(ProductService productService, ProductValidator productValidator) {
+        this.productService = productService;
+        this.productValidator = productValidator;
+    }
 
     @GetMapping()
     public ResponseEntity<List<ProductDTO>> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Page<ProductDTO> productPage = productService.getProducts(page, size);
         List<ProductDTO> products = productPage.getContent();
         return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/search")
+    public List<ProductDTO> searchProduct(ProductFilter filter) {
+        List<ProductDTO> products = productService.getProducts(filter);
+        return products;
     }
 
 
