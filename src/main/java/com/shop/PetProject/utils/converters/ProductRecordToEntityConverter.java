@@ -16,6 +16,7 @@ public class ProductRecordToEntityConverter implements Converter<ProductDTO, Pro
                 .category(source.category())
                 .quantity(source.quantity())
                 .article(source.article())
+                .isAvailable(source.isAvailable())
                 .build();
     }
 }
