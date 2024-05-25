@@ -8,7 +8,6 @@ import com.shop.PetProject.models.ProductEntity;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.shop.PetProject.models.QProductEntity.productEntity;
 

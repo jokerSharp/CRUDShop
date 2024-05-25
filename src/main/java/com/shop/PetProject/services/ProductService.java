@@ -1,7 +1,9 @@
 package com.shop.PetProject.services;
 
+import com.querydsl.core.types.Predicate;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.dtos.ProductFilter;
+import com.shop.PetProject.dtos.QPredicates;
 import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.ProductRepository;
 import com.shop.PetProject.utils.ProductAlreadyExistsException;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.shop.PetProject.models.QProductEntity.productEntity;
+
 @Service
 @Transactional(readOnly = true)
 public class ProductService {
@@ -31,6 +35,17 @@ public class ProductService {
         this.conversionService = conversionService;
     }
 
+
+    public Page<ProductDTO> getProducts(ProductFilter filter, Pageable pageable) {
+        Predicate predicate = QPredicates.builder()
+                .add(filter.name(), productEntity.name::containsIgnoreCase)
+                .add(filter.quantity(), productEntity.quantity::loe)
+                .add(filter.price(), productEntity.price::goe)
+                .add(filter.isAvailable(), productEntity.isAvailable::eq)
+                .build();
+        return productRepository.findAll(predicate, pageable)
+                .map(product -> conversionService.convert(product, ProductDTO.class));
+    }
 
     public List<ProductDTO> getProducts(ProductFilter filter) {
         return productRepository.findAllByFilter(filter).stream()
