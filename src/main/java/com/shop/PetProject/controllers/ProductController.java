@@ -1,5 +1,6 @@
 package com.shop.PetProject.controllers;
 
+import com.shop.PetProject.dtos.PageResponse;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.dtos.ProductFilter;
 import com.shop.PetProject.services.ProductService;
@@ -7,6 +8,7 @@ import com.shop.PetProject.utils.ProductAlreadyExistsException;
 import com.shop.PetProject.utils.ProductValidator;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -35,11 +37,11 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<ProductDTO> searchProduct(ProductFilter filter) {
-        List<ProductDTO> products = productService.getProducts(filter);
-        return products;
+    public PageResponse<ProductDTO> pageableSearch(ProductFilter filter, Pageable pageable) {
+        Page<ProductDTO> productPage = productService.getProducts(filter, pageable);
+        PageResponse<ProductDTO> pageResponse = PageResponse.of(productPage);
+        return pageResponse;
     }
-
 
     @PostMapping
     public void save(@RequestBody @Valid ProductDTO productDTO, BindingResult bindingResult) {
