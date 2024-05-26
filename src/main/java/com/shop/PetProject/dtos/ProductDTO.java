@@ -5,9 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Builder
 public record ProductDTO(String name,
-                         Double price,
+                         BigDecimal price,
                          String description,
                          Categories category,
                          Integer quantity,

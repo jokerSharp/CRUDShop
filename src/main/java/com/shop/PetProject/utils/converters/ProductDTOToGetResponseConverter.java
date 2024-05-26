@@ -1,22 +1,22 @@
 package com.shop.PetProject.utils.converters;
 
+import com.shop.PetProject.controllers.responses.GetProductResponse;
 import com.shop.PetProject.dtos.ProductDTO;
-import com.shop.PetProject.models.ProductEntity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductRecordToEntityConverter implements Converter<ProductDTO, ProductEntity> {
+public class ProductDTOToGetResponseConverter implements Converter<ProductDTO, GetProductResponse> {
+
     @Override
-    public ProductEntity convert(ProductDTO source) {
-        return ProductEntity.builder()
+    public GetProductResponse convert(ProductDTO source) {
+        return GetProductResponse.builder()
+                .article(source.article())
                 .name(source.name())
-                .price(source.price().doubleValue())
                 .description(source.description())
                 .category(source.category())
+                .price(source.price())
                 .quantity(source.quantity())
-                .article(source.article())
-                .isAvailable(source.isAvailable())
                 .build();
     }
 }
