@@ -96,7 +96,7 @@ public class ProductService {
                 throw new ProductIntegrityViolationException("Product article or product name should not be changed");
             }
         }
-        if (productDTO.price() != null) updatedProductEntity.setPrice(productDTO.price());
+        if (productDTO.price() != null) updatedProductEntity.setPrice(productDTO.price().doubleValue());
         if (productDTO.description() != null) updatedProductEntity.setDescription(productDTO.description());
         if (productDTO.category() != null) updatedProductEntity.setCategory(productDTO.category());
         if (productDTO.quantity() != null) updatedProductEntity.setQuantity(productDTO.quantity());
