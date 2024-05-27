@@ -4,6 +4,7 @@ import com.shop.PetProject.controllers.responses.GetProductResponse;
 import com.shop.PetProject.dtos.PageResponse;
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.dtos.ProductFilter;
+import com.shop.PetProject.exchange.ExchangeRate;
 import com.shop.PetProject.services.ProductService;
 import com.shop.PetProject.utils.ProductAlreadyExistsException;
 import com.shop.PetProject.utils.ProductValidator;
@@ -15,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,12 +29,14 @@ public class ProductController {
     private final ProductService productService;
     private final ProductValidator productValidator;
     private final ConversionService conversionService;
+    private final RestTemplate restTemplate;
 
 
-    public ProductController(ProductService productService, ProductValidator productValidator, ConversionService conversionService) {
+    public ProductController(ProductService productService, ProductValidator productValidator, ConversionService conversionService, RestTemplate restTemplate) {
         this.productService = productService;
         this.productValidator = productValidator;
         this.conversionService = conversionService;
+        this.restTemplate = restTemplate;
     }
 
     @GetMapping()
@@ -82,5 +87,11 @@ public class ProductController {
         ProductDTO productDTO = productService.getProductByName(name);
 
         return conversionService.convert(productDTO, GetProductResponse.class);
+    }
+
+    @GetMapping("/exchange/rate")
+    public ExchangeRate getRate() {
+        ResponseEntity<ExchangeRate> forEntity = restTemplate.getForEntity("http://localhost:8081/api/v1/rate", ExchangeRate.class);
+        return forEntity.getBody();
     }
 }
