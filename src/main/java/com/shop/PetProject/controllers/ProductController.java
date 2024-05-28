@@ -9,6 +9,7 @@ import com.shop.PetProject.services.ProductService;
 import com.shop.PetProject.utils.ProductAlreadyExistsException;
 import com.shop.PetProject.utils.ProductValidator;
 import jakarta.validation.Valid;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,9 +89,12 @@ public class ProductController {
         return conversionService.convert(productDTO, GetProductResponse.class);
     }
 
+
+    @Cacheable("exchangeRate")
     @GetMapping("/exchange/rate")
     public ExchangeRate getRate() {
         ResponseEntity<ExchangeRate> forEntity = restTemplate.getForEntity("http://localhost:8081/api/v1/rate", ExchangeRate.class);
         return forEntity.getBody();
     }
+
 }
