@@ -1,6 +1,7 @@
 package com.shop.PetProject.exchange;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shop.PetProject.interactions.ExchangeRateClient;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -11,12 +12,16 @@ import java.util.Optional;
 @Component
 public class ExchangeRateProvider {
 
-    private static final BigDecimal DEFAULT_RATE = BigDecimal.valueOf(1.00);
     private static final String jsonCurrenciesFileName = "src/main/resources/exchange-rate.json";
+    private final ExchangeRateClient exchangeRateClient;
+
+    public ExchangeRateProvider(ExchangeRateClient exchangeRateClient) {
+        this.exchangeRateClient = exchangeRateClient;
+    }
 
     public BigDecimal getExchangeRate(Currency currency) {
-        return Optional.ofNullable(getExchangeRateFromFile(currency))
-                .orElse(DEFAULT_RATE);
+        return Optional.ofNullable(getExchangeRateFromService(currency))
+                .orElseGet(() -> getExchangeRateFromFile(currency));
     }
 
     private BigDecimal getExchangeRateFromFile(Currency currency) {
@@ -29,6 +34,13 @@ public class ExchangeRateProvider {
             throw new RuntimeException(e);
         }
     }
+
+    private BigDecimal getExchangeRateFromService(Currency currency) {
+        return Optional.ofNullable(exchangeRateClient.getExchangeRate())
+                .map(rate -> getExchangeRateByCurrency(rate, currency))
+                .orElse(null);
+    }
+
     private BigDecimal getExchangeRateByCurrency(ExchangeRate exchangeRate, Currency currency) {
         return switch (currency) {
             case USD -> exchangeRate.getUsdExchangeRate();
@@ -36,6 +48,4 @@ public class ExchangeRateProvider {
             case GBP -> exchangeRate.getGbpExchangeRate();
         };
     }
-
-
 }
