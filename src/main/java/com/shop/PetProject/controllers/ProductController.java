@@ -88,13 +88,4 @@ public class ProductController {
 
         return conversionService.convert(productDTO, GetProductResponse.class);
     }
-
-
-    @Cacheable("exchangeRate")
-    @GetMapping("/exchange/rate")
-    public ExchangeRate getRate() {
-        ResponseEntity<ExchangeRate> forEntity = restTemplate.getForEntity("http://localhost:8081/api/v1/rate", ExchangeRate.class);
-        return forEntity.getBody();
-    }
-
 }
