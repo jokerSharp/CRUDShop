@@ -6,3 +6,8 @@ spring:
       period: 30000
   profiles:
     active: local
+
+interaction:
+  rate:
+    baseUrl: http://localhost:8081
+    stub: false
