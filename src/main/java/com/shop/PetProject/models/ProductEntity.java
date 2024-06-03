@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -39,4 +40,6 @@ public class ProductEntity {
     private LocalDateTime quantityChange;
     @Column(name = "is_available")
     private Boolean isAvailable;
+    @ManyToMany(mappedBy = "products")
+    private List<OrderEntity> orders;
 }

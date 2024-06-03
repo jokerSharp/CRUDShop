@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "customer")
 @Data
@@ -21,4 +23,6 @@ public class CustomerEntity {
     private String name;
     @Column(name = "email")
     private String email;
+    @OneToMany(mappedBy = "customer")
+    private List<OrderEntity> orders;
 }
