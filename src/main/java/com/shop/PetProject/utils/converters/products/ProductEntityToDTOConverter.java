@@ -1,4 +1,4 @@
-package com.shop.PetProject.utils.converters;
+package com.shop.PetProject.utils.converters.products;
 
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 
 @Component
-public class ProductEntityToRecordConverter implements Converter<ProductEntity, ProductDTO> {
+public class ProductEntityToDTOConverter implements Converter<ProductEntity, ProductDTO> {
     @Override
     public ProductDTO convert(ProductEntity source) {
         return ProductDTO.builder()
