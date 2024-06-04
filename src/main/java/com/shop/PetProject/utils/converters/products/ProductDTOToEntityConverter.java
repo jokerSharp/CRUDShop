@@ -1,4 +1,4 @@
-package com.shop.PetProject.utils.converters;
+package com.shop.PetProject.utils.converters.products;
 
 import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
@@ -6,7 +6,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductRecordToEntityConverter implements Converter<ProductDTO, ProductEntity> {
+public class ProductDTOToEntityConverter implements Converter<ProductDTO, ProductEntity> {
     @Override
     public ProductEntity convert(ProductDTO source) {
         return ProductEntity.builder()
