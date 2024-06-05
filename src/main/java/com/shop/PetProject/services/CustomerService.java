@@ -26,7 +26,6 @@ public class CustomerService {
 
     @Transactional
     public void save(CustomerDTO customerDTO) {
-//        customerRepository.save(convertCustomerDTOToEntity(customerDTO));
         customerRepository.save(conversionService.convert(customerDTO, CustomerEntity.class));
     }
 
@@ -42,7 +41,6 @@ public class CustomerService {
     }
 
     public void delete(long id) {
-
         Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
         if (customerEntity.isPresent()) {
             customerRepository.deleteById(id);

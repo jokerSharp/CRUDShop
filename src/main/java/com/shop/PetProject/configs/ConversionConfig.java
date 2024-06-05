@@ -1,11 +1,11 @@
 package com.shop.PetProject.configs;
 
+import com.shop.PetProject.utils.converters.customers.CustomerDTOToEntityConverter;
+import com.shop.PetProject.utils.converters.customers.CustomerEntityToDTOConverter;
 import com.shop.PetProject.utils.converters.orders.OrderDTOToEntityConverter;
 import com.shop.PetProject.utils.converters.products.ProductDTOToEntityConverter;
 import com.shop.PetProject.utils.converters.products.ProductDTOToGetResponseConverter;
 import com.shop.PetProject.utils.converters.products.ProductEntityToDTOConverter;
-import com.shop.PetProject.utils.converters.customers.CustomerDTOToEntityConverter;
-import com.shop.PetProject.utils.converters.customers.CustomerEntityToDTOConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;

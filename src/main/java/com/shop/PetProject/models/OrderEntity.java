@@ -20,7 +20,7 @@ public class OrderEntity {
     @Column(name = "id")
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "customer", referencedColumnName = "id")
+    @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private CustomerEntity customer;
     @ManyToMany
     @JoinTable(
