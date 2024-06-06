@@ -23,6 +23,8 @@ public class OrderEntityToDTOConverter implements Converter<OrderEntity, OrderDT
 //                .products(source.getProducts().stream()
 //                        .map(productEntity -> conversionService.convert(productEntity, ProductDTO.class))
 //                        .collect(Collectors.toSet()))
+                .id(source.getId())
+                .customerId(source.getCustomer().getId())
                 .status(source.getStatus())
                 .totalPrice(source.getTotalPrice())
                 .build();

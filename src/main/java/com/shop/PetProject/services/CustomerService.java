@@ -29,6 +29,7 @@ public class CustomerService {
         customerRepository.save(conversionService.convert(customerDTO, CustomerEntity.class));
     }
 
+    @Transactional
     public void update(long id, CustomerDTO customerDTO) {
         Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
         if (customerEntity.isPresent()) {
@@ -40,6 +41,7 @@ public class CustomerService {
         }
     }
 
+    @Transactional
     public void delete(long id) {
         Optional<CustomerEntity> customerEntity = customerRepository.findById(id);
         if (customerEntity.isPresent()) {

@@ -19,13 +19,13 @@ public class OrderController {
     }
 
     @PostMapping
-    public void save(@RequestBody OrderDTO orderDTO) {
-        orderService.save(orderDTO);
+    public OrderDTO save(@RequestBody OrderDTO orderDTO) {
+        return orderService.save(orderDTO);
     }
 
     @PatchMapping("/{id}")
-    public void update(@PathVariable(name = "id") long id, @RequestBody OrderDTO orderDTO) {
-        orderService.update(id, orderDTO);
+    public OrderDTO update(@PathVariable(name = "id") long id, @RequestBody OrderDTO orderDTO) {
+        return orderService.update(id, orderDTO);
     }
 
     @DeleteMapping("/{id}")

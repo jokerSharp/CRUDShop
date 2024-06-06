@@ -1,6 +1,7 @@
 package com.shop.PetProject.services;
 
 import com.shop.PetProject.dtos.OrderDTO;
+import com.shop.PetProject.models.CustomerEntity;
 import com.shop.PetProject.models.OrderEntity;
 import com.shop.PetProject.repositories.CustomerRepository;
 import com.shop.PetProject.repositories.OrderRepository;
@@ -24,28 +25,36 @@ public class OrderService {
     }
 
     public OrderDTO getOne(long id) {
-        return conversionService.convert(orderRepository.findById(id), OrderDTO.class);
+        return conversionService.convert(orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order is not found")), OrderDTO.class);
     }
 
     @Transactional
-    public void save(OrderDTO orderDTO) {
-//        Optional<CustomerEntity> customerEntity = customerRepository.findById(orderDTO.customerId());
+    public OrderDTO save(OrderDTO orderDTO) {
+        Optional<CustomerEntity> customerEntity = customerRepository.findById(orderDTO.customerId());
         OrderEntity orderEntity = conversionService.convert(orderDTO, OrderEntity.class);
-//        customerEntity.ifPresent(orderEntity::setCustomer);
-        orderRepository.save(orderEntity);
+        customerEntity.ifPresent(orderEntity::setCustomer);
+//        orderRepository.save(orderEntity);
+        OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
+        return conversionService.convert(savedOrderEntity, OrderDTO.class);
     }
 
-    public void update(long id, OrderDTO orderDTO) {
+    @Transactional
+    public OrderDTO update(long id, OrderDTO orderDTO) {
         Optional<OrderEntity> orderEntity = orderRepository.findById(id);
         if (orderEntity.isPresent()) {
             OrderEntity orderEntityToUpdate = conversionService.convert(orderDTO, OrderEntity.class);
             orderEntityToUpdate.setId(id);
-            orderRepository.save(orderEntityToUpdate);
+            Optional<CustomerEntity> customerEntity = customerRepository.findById(orderDTO.customerId());
+            customerEntity.ifPresent(orderEntityToUpdate::setCustomer);
+            OrderEntity updatedOrderEntity = orderRepository.save(orderEntityToUpdate);
+            return conversionService.convert(updatedOrderEntity, OrderDTO.class);
         } else {
             throw new RuntimeException("Order is not found");
         }
     }
 
+    @Transactional
     public void delete(long id) {
         Optional<OrderEntity> orderEntity = orderRepository.findById(id);
         if (orderEntity.isPresent()) {
