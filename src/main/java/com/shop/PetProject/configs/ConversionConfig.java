@@ -3,6 +3,7 @@ package com.shop.PetProject.configs;
 import com.shop.PetProject.utils.converters.customers.CustomerDTOToEntityConverter;
 import com.shop.PetProject.utils.converters.customers.CustomerEntityToDTOConverter;
 import com.shop.PetProject.utils.converters.orders.OrderDTOToEntityConverter;
+import com.shop.PetProject.utils.converters.orders.OrderEntityToDTOConverter;
 import com.shop.PetProject.utils.converters.products.ProductDTOToEntityConverter;
 import com.shop.PetProject.utils.converters.products.ProductDTOToGetResponseConverter;
 import com.shop.PetProject.utils.converters.products.ProductEntityToDTOConverter;
@@ -23,7 +24,7 @@ public class ConversionConfig {
         conversionService.addConverter(new CustomerDTOToEntityConverter());
         conversionService.addConverter(new CustomerEntityToDTOConverter());
         conversionService.addConverter(new OrderDTOToEntityConverter());
-        conversionService.addConverter(new OrderDTOToEntityConverter());
+        conversionService.addConverter(new OrderEntityToDTOConverter());
         return conversionService;
     }
 }

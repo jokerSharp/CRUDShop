@@ -40,6 +40,6 @@ public class ProductEntity {
     private LocalDateTime quantityChange;
     @Column(name = "is_available")
     private Boolean isAvailable;
-    @ManyToMany(mappedBy = "products")
-    private List<OrderEntity> orders;
+//    @ManyToMany(mappedBy = "products")
+//    private List<OrderEntity> orders;
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.Set;
 
 @Entity
-@Table(name = "order")
+@Table(name = "order_entity")
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,13 +22,13 @@ public class OrderEntity {
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private CustomerEntity customer;
-    @ManyToMany
-    @JoinTable(
-            name = "order_product",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private Set<ProductEntity> products;
+//    @ManyToMany
+//    @JoinTable(
+//            name = "order_product",
+//            joinColumns = @JoinColumn(name = "order_id"),
+//            inverseJoinColumns = @JoinColumn(name = "product_id")
+//    )
+//    private Set<ProductEntity> products;
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private OrderStatuses status;
