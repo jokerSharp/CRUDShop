@@ -1,6 +1,7 @@
 package com.shop.PetProject.services;
 
 import com.shop.PetProject.dtos.CustomerDTO;
+import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
 import com.shop.PetProject.models.CustomerEntity;
 import com.shop.PetProject.repositories.CustomerRepository;
 import org.springframework.core.convert.ConversionService;
@@ -21,7 +22,8 @@ public class CustomerService {
     }
 
     public CustomerDTO getOne(long id) {
-        return conversionService.convert(customerRepository.findById(id).orElse(null), CustomerDTO.class);
+        return conversionService.convert(customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found")), CustomerDTO.class);
     }
 
     @Transactional
@@ -37,7 +39,7 @@ public class CustomerService {
             customerEntityToUpdate.setId(id);
             customerRepository.save(customerEntityToUpdate);
         } else {
-            throw new RuntimeException("Customer not found");
+            throw new CustomerNotFoundException("Customer is not found");
         }
     }
 
@@ -47,7 +49,7 @@ public class CustomerService {
         if (customerEntity.isPresent()) {
             customerRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Customer not found");
+            throw new CustomerNotFoundException("Customer is not found");
         }
     }
 }
