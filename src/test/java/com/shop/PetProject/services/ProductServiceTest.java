@@ -4,7 +4,7 @@ import com.shop.PetProject.dtos.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.ProductRepository;
 import com.shop.PetProject.testUtils.converters.ManualConverter;
-import com.shop.PetProject.utils.ProductNotFoundException;
+import com.shop.PetProject.exceptions.product.ProductNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

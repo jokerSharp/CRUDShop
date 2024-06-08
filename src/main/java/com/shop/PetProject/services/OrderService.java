@@ -1,6 +1,7 @@
 package com.shop.PetProject.services;
 
 import com.shop.PetProject.dtos.OrderDTO;
+import com.shop.PetProject.exceptions.order.OrderNotFoundException;
 import com.shop.PetProject.models.CustomerEntity;
 import com.shop.PetProject.models.OrderEntity;
 import com.shop.PetProject.repositories.CustomerRepository;
@@ -26,7 +27,7 @@ public class OrderService {
 
     public OrderDTO getOne(long id) {
         return conversionService.convert(orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Order is not found")), OrderDTO.class);
+                .orElseThrow(() -> new OrderNotFoundException("Order is not found")), OrderDTO.class);
     }
 
     @Transactional
@@ -50,7 +51,7 @@ public class OrderService {
             OrderEntity updatedOrderEntity = orderRepository.save(orderEntityToUpdate);
             return conversionService.convert(updatedOrderEntity, OrderDTO.class);
         } else {
-            throw new RuntimeException("Order is not found");
+            throw new OrderNotFoundException("Order is not found");
         }
     }
 
@@ -60,7 +61,7 @@ public class OrderService {
         if (orderEntity.isPresent()) {
             orderRepository.deleteById(id);
         } else {
-            throw new RuntimeException("Order is not found");
+            throw new OrderNotFoundException("Order is not found");
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.shop.PetProject.utils;
+package com.shop.PetProject.exceptions.product;
 
 public class ProductIntegrityViolationException extends RuntimeException {
 
