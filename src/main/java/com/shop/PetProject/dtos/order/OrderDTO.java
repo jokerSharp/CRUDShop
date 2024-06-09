@@ -1,6 +1,6 @@
-package com.shop.PetProject.dtos;
+package com.shop.PetProject.dtos.order;
 
-import com.shop.PetProject.models.CustomerEntity;
+import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.models.OrderStatuses;
 import lombok.Builder;
 

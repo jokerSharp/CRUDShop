@@ -1,9 +1,7 @@
-package com.shop.PetProject.dtos;
+package com.shop.PetProject.dtos.product;
 
 import com.shop.PetProject.models.Categories;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 

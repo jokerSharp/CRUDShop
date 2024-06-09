@@ -1,16 +1,26 @@
 package com.shop.PetProject.services;
 
-import com.shop.PetProject.dtos.OrderDTO;
+import com.querydsl.core.types.Predicate;
+import com.shop.PetProject.dtos.QPredicates;
+import com.shop.PetProject.dtos.customer.CustomerDTO;
+import com.shop.PetProject.dtos.customer.CustomerFilter;
+import com.shop.PetProject.dtos.order.OrderDTO;
+import com.shop.PetProject.dtos.order.OrderFilter;
 import com.shop.PetProject.exceptions.order.OrderNotFoundException;
 import com.shop.PetProject.models.CustomerEntity;
 import com.shop.PetProject.models.OrderEntity;
-import com.shop.PetProject.repositories.CustomerRepository;
-import com.shop.PetProject.repositories.OrderRepository;
+import com.shop.PetProject.repositories.customer.CustomerRepository;
+import com.shop.PetProject.repositories.order.OrderRepository;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.shop.PetProject.models.QCustomerEntity.customerEntity;
+import static com.shop.PetProject.models.QOrderEntity.orderEntity;
 
 @Service
 @Transactional(readOnly = true)
@@ -25,6 +35,15 @@ public class OrderService {
         this.conversionService = conversionService;
     }
 
+    public Page<OrderDTO> getAll(OrderFilter filter, Pageable pageable) {
+        Predicate predicate = QPredicates.builder()
+                .add(filter.id(), orderEntity.id::eq)
+                .add(filter.status(), orderEntity.status::eq)
+                .build();
+        return orderRepository.findAll(predicate, pageable)
+                .map(order -> conversionService.convert(order, OrderDTO.class));
+    }
+
     public OrderDTO getOne(long id) {
         return conversionService.convert(orderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotFoundException("Order is not found")), OrderDTO.class);
@@ -35,7 +54,6 @@ public class OrderService {
         Optional<CustomerEntity> customerEntity = customerRepository.findById(orderDTO.customerId());
         OrderEntity orderEntity = conversionService.convert(orderDTO, OrderEntity.class);
         customerEntity.ifPresent(orderEntity::setCustomer);
-//        orderRepository.save(orderEntity);
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
         return conversionService.convert(savedOrderEntity, OrderDTO.class);
     }

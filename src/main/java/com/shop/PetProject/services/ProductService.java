@@ -1,11 +1,11 @@
 package com.shop.PetProject.services;
 
 import com.querydsl.core.types.Predicate;
-import com.shop.PetProject.dtos.ProductDTO;
-import com.shop.PetProject.dtos.ProductFilter;
+import com.shop.PetProject.dtos.product.ProductDTO;
+import com.shop.PetProject.dtos.product.ProductFilter;
 import com.shop.PetProject.dtos.QPredicates;
 import com.shop.PetProject.models.ProductEntity;
-import com.shop.PetProject.repositories.ProductRepository;
+import com.shop.PetProject.repositories.product.ProductRepository;
 import com.shop.PetProject.exceptions.product.ProductAlreadyExistsException;
 import com.shop.PetProject.exceptions.product.ProductIntegrityViolationException;
 import com.shop.PetProject.exceptions.product.ProductNotFoundException;

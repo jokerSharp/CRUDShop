@@ -1,6 +1,6 @@
 package com.shop.PetProject.services;
 
-import com.shop.PetProject.repositories.ProductRepository;
+import com.shop.PetProject.repositories.product.ProductRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

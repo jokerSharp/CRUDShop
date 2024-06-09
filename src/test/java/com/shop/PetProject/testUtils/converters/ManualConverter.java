@@ -1,6 +1,6 @@
 package com.shop.PetProject.testUtils.converters;
 
-import com.shop.PetProject.dtos.ProductDTO;
+import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
 
 public class ManualConverter {

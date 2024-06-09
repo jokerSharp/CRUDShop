@@ -1,7 +1,13 @@
 package com.shop.PetProject.controllers;
 
-import com.shop.PetProject.dtos.OrderDTO;
+import com.shop.PetProject.dtos.PageResponse;
+import com.shop.PetProject.dtos.customer.CustomerDTO;
+import com.shop.PetProject.dtos.customer.CustomerFilter;
+import com.shop.PetProject.dtos.order.OrderDTO;
+import com.shop.PetProject.dtos.order.OrderFilter;
 import com.shop.PetProject.services.OrderService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,6 +17,13 @@ public class OrderController {
 
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
+    }
+
+    @GetMapping
+    public PageResponse<OrderDTO> pageableSearch(OrderFilter filter, Pageable pageable) {
+        Page<OrderDTO> page = orderService.getAll(filter, pageable);
+        PageResponse<OrderDTO> pageResponse = PageResponse.of(page);
+        return pageResponse;
     }
 
     @GetMapping("/{id}")
