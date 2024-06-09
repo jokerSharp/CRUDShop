@@ -1,14 +1,21 @@
 package com.shop.PetProject.services;
 
-import com.shop.PetProject.dtos.CustomerDTO;
+import com.querydsl.core.types.Predicate;
+import com.shop.PetProject.dtos.customer.CustomerDTO;
+import com.shop.PetProject.dtos.customer.CustomerFilter;
+import com.shop.PetProject.dtos.QPredicates;
 import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
 import com.shop.PetProject.models.CustomerEntity;
-import com.shop.PetProject.repositories.CustomerRepository;
+import com.shop.PetProject.repositories.customer.CustomerRepository;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+
+import static com.shop.PetProject.models.QCustomerEntity.customerEntity;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,6 +31,15 @@ public class CustomerService {
     public CustomerDTO getOne(long id) {
         return conversionService.convert(customerRepository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer is not found")), CustomerDTO.class);
+    }
+
+    public Page<CustomerDTO> getAll(CustomerFilter filter, Pageable pageable) {
+        Predicate predicate = QPredicates.builder()
+                .add(filter.name(), customerEntity.name::containsIgnoreCase)
+                .add(filter.email(), customerEntity.email::containsIgnoreCase)
+                .build();
+        return customerRepository.findAll(predicate, pageable)
+                .map(customer -> conversionService.convert(customer, CustomerDTO.class));
     }
 
     @Transactional

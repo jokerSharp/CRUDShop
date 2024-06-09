@@ -1,8 +1,8 @@
-package com.shop.PetProject.repositories;
+package com.shop.PetProject.repositories.product;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQuery;
-import com.shop.PetProject.dtos.ProductFilter;
+import com.shop.PetProject.dtos.product.ProductFilter;
 import com.shop.PetProject.dtos.QPredicates;
 import com.shop.PetProject.models.ProductEntity;
 import jakarta.persistence.EntityManager;

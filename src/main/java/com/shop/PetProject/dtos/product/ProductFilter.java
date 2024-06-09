@@ -1,6 +1,4 @@
-package com.shop.PetProject.dtos;
-
-import com.shop.PetProject.models.Categories;
+package com.shop.PetProject.dtos.product;
 
 public record ProductFilter(String name,
                             Double price,

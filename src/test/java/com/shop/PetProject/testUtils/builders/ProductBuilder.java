@@ -1,6 +1,6 @@
 package com.shop.PetProject.testUtils.builders;
 
-import com.shop.PetProject.dtos.ProductDTO;
+import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.models.Categories;
 import com.shop.PetProject.models.ProductEntity;
 

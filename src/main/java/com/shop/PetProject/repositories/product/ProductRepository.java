@@ -1,4 +1,4 @@
-package com.shop.PetProject.repositories;
+package com.shop.PetProject.repositories.product;
 
 import com.shop.PetProject.models.ProductEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,7 +12,8 @@ import java.util.UUID;
 
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID>,
-        FilterProductRepository, QuerydslPredicateExecutor<ProductEntity> {
+        FilterProductRepository,
+        QuerydslPredicateExecutor<ProductEntity> {
 
     long deleteByName(String name);
 

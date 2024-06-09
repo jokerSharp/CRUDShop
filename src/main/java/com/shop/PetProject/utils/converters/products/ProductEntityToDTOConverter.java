@@ -1,6 +1,6 @@
 package com.shop.PetProject.utils.converters.products;
 
-import com.shop.PetProject.dtos.ProductDTO;
+import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

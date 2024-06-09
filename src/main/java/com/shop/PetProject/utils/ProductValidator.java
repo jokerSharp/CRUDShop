@@ -1,8 +1,8 @@
 package com.shop.PetProject.utils;
 
-import com.shop.PetProject.dtos.ProductDTO;
+import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.exceptions.product.ProductAlreadyExistsException;
-import com.shop.PetProject.repositories.ProductRepository;
+import com.shop.PetProject.repositories.product.ProductRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

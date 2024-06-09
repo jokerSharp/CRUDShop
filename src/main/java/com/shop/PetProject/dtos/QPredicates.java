@@ -1,6 +1,5 @@
 package com.shop.PetProject.dtos;
 
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;

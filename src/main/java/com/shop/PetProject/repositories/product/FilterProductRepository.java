@@ -1,6 +1,6 @@
-package com.shop.PetProject.repositories;
+package com.shop.PetProject.repositories.product;
 
-import com.shop.PetProject.dtos.ProductFilter;
+import com.shop.PetProject.dtos.product.ProductFilter;
 import com.shop.PetProject.models.ProductEntity;
 
 import java.util.List;

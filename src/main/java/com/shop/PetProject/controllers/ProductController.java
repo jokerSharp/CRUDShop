@@ -2,8 +2,8 @@ package com.shop.PetProject.controllers;
 
 import com.shop.PetProject.controllers.responses.GetProductResponse;
 import com.shop.PetProject.dtos.PageResponse;
-import com.shop.PetProject.dtos.ProductDTO;
-import com.shop.PetProject.dtos.ProductFilter;
+import com.shop.PetProject.dtos.product.ProductDTO;
+import com.shop.PetProject.dtos.product.ProductFilter;
 import com.shop.PetProject.services.ProductService;
 import com.shop.PetProject.exceptions.product.ProductAlreadyExistsException;
 import com.shop.PetProject.utils.ProductValidator;

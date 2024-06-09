@@ -1,8 +1,8 @@
 package com.shop.PetProject.services;
 
-import com.shop.PetProject.dtos.ProductDTO;
+import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.models.ProductEntity;
-import com.shop.PetProject.repositories.ProductRepository;
+import com.shop.PetProject.repositories.product.ProductRepository;
 import com.shop.PetProject.testUtils.converters.ManualConverter;
 import com.shop.PetProject.exceptions.product.ProductNotFoundException;
 import org.junit.jupiter.api.Assertions;
