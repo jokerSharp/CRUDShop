@@ -1,13 +1,11 @@
 package com.shop.PetProject.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Set;
 
+@ToString
 @Entity
 @Table(name = "order_entity")
 @Data
@@ -22,13 +20,9 @@ public class OrderEntity {
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private CustomerEntity customer;
-//    @ManyToMany
-//    @JoinTable(
-//            name = "order_product",
-//            joinColumns = @JoinColumn(name = "order_id"),
-//            inverseJoinColumns = @JoinColumn(name = "product_id")
-//    )
-//    private Set<ProductEntity> products;
+    @OneToMany(mappedBy = "orderEntity")
+//    @JoinColumn(name = "order_id")
+    private Set<OrderTotal> orderTotals;
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private OrderStatuses status;

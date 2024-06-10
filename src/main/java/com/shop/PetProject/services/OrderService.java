@@ -6,18 +6,27 @@ import com.shop.PetProject.dtos.customer.CustomerDTO;
 import com.shop.PetProject.dtos.customer.CustomerFilter;
 import com.shop.PetProject.dtos.order.OrderDTO;
 import com.shop.PetProject.dtos.order.OrderFilter;
+import com.shop.PetProject.dtos.order.OrderTotalDTO;
 import com.shop.PetProject.exceptions.order.OrderNotFoundException;
 import com.shop.PetProject.models.CustomerEntity;
 import com.shop.PetProject.models.OrderEntity;
+import com.shop.PetProject.models.OrderTotal;
+import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.customer.CustomerRepository;
 import com.shop.PetProject.repositories.order.OrderRepository;
+import com.shop.PetProject.repositories.order.OrderTotalRepository;
+import com.shop.PetProject.repositories.product.ProductRepository;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.shop.PetProject.models.QCustomerEntity.customerEntity;
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
@@ -26,11 +35,15 @@ import static com.shop.PetProject.models.QOrderEntity.orderEntity;
 @Transactional(readOnly = true)
 public class OrderService {
     private final OrderRepository orderRepository;
+    private final OrderTotalRepository orderTotalRepository;
+    private final ProductRepository productRepository;
     private final CustomerRepository customerRepository;
     private final ConversionService conversionService;
 
-    public OrderService(OrderRepository orderRepository, CustomerRepository customerRepository, ConversionService conversionService) {
+    public OrderService(OrderRepository orderRepository, OrderTotalRepository orderTotalRepository, ProductRepository productRepository, CustomerRepository customerRepository, ConversionService conversionService) {
         this.orderRepository = orderRepository;
+        this.orderTotalRepository = orderTotalRepository;
+        this.productRepository = productRepository;
         this.customerRepository = customerRepository;
         this.conversionService = conversionService;
     }
@@ -55,6 +68,20 @@ public class OrderService {
         OrderEntity orderEntity = conversionService.convert(orderDTO, OrderEntity.class);
         customerEntity.ifPresent(orderEntity::setCustomer);
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
+
+        Set<OrderTotal> orderTotalSet = new HashSet<>();
+        for (OrderTotalDTO orderTotalDTO : orderDTO.orderTotals()) {
+            OrderTotal orderTotal = convertOrderTotalDTOToEntity(orderTotalDTO);
+            orderTotal.setOrderEntity(OrderEntity.builder().id(savedOrderEntity.getId()).build());
+            if (orderTotal != null) {
+                orderTotalRepository.save(orderTotal);
+            }
+
+            orderTotalSet.add(orderTotal);
+        }
+
+
+
         return conversionService.convert(savedOrderEntity, OrderDTO.class);
     }
 
@@ -81,5 +108,17 @@ public class OrderService {
         } else {
             throw new OrderNotFoundException("Order is not found");
         }
+    }
+
+    public OrderTotal convertOrderTotalDTOToEntity(OrderTotalDTO source) {
+        ProductEntity productEntity = productRepository.findByName(source.productName()).stream().findFirst().get();
+        int entityQuantity = source.quantity();
+        BigDecimal entityTotal = BigDecimal.valueOf(productEntity.getPrice() * entityQuantity);
+
+        return OrderTotal.builder()
+                .product(productEntity)
+                .quantity(source.quantity())
+                .total(entityTotal)
+                .build();
     }
 }
