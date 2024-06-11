@@ -4,6 +4,7 @@ import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.models.Categories;
 import com.shop.PetProject.models.ProductEntity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class ProductBuilder {
     public static ProductDTO getProductDTO() {
         return ProductDTO.builder()
                 .name("laptop")
-                .price(1500.5)
+                .price(BigDecimal.valueOf(1500.5))
                 .description("usual laptop")
                 .category(Categories.ELECTRONICS)
                 .quantity(111)
@@ -39,7 +40,7 @@ public class ProductBuilder {
     public static ProductDTO getRandomProductDTO() {
         return ProductDTO.builder()
                 .name(getRandomShortString())
-                .price(Double.valueOf(getRandomPriceWithCents()))
+                .price(BigDecimal.valueOf(Double.valueOf(getRandomPriceWithCents())))
                 .description(getRandomShortString())
                 .category(getRandomValueFromEnum(Categories.class))
                 .quantity(getRandomPositiveInt())
