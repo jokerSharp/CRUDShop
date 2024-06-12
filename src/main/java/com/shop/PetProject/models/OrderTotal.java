@@ -30,6 +30,6 @@ public class OrderTotal {
     @Column(name = "quantity")
     private int quantity;
 
-    @Column(name = "total")
-    private BigDecimal total;
+    @Column(name = "subtotal")
+    private BigDecimal subtotal;
 }

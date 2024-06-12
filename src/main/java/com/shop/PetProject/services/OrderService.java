@@ -1,17 +1,15 @@
 package com.shop.PetProject.services;
 
 import com.querydsl.core.types.Predicate;
+import com.shop.PetProject.controllers.requests.OrderRequest;
+import com.shop.PetProject.controllers.requests.OrderedProductInfo;
 import com.shop.PetProject.dtos.QPredicates;
-import com.shop.PetProject.dtos.customer.CustomerDTO;
-import com.shop.PetProject.dtos.customer.CustomerFilter;
 import com.shop.PetProject.dtos.order.OrderDTO;
 import com.shop.PetProject.dtos.order.OrderFilter;
 import com.shop.PetProject.dtos.order.OrderTotalDTO;
+import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
 import com.shop.PetProject.exceptions.order.OrderNotFoundException;
-import com.shop.PetProject.models.CustomerEntity;
-import com.shop.PetProject.models.OrderEntity;
-import com.shop.PetProject.models.OrderTotal;
-import com.shop.PetProject.models.ProductEntity;
+import com.shop.PetProject.models.*;
 import com.shop.PetProject.repositories.customer.CustomerRepository;
 import com.shop.PetProject.repositories.order.OrderRepository;
 import com.shop.PetProject.repositories.order.OrderTotalRepository;
@@ -23,12 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static com.shop.PetProject.models.QCustomerEntity.customerEntity;
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
 
 @Service
@@ -63,24 +57,29 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDTO save(OrderDTO orderDTO) {
-        Optional<CustomerEntity> customerEntity = customerRepository.findById(orderDTO.customerId());
-        OrderEntity orderEntity = conversionService.convert(orderDTO, OrderEntity.class);
-        customerEntity.ifPresent(orderEntity::setCustomer);
+    public OrderDTO save(OrderRequest orderRequest) {
+        CustomerEntity customerEntity = customerRepository.findById(orderRequest.customerId())
+                .orElseThrow(() -> new CustomerNotFoundException("Customer is not found"));
+        OrderEntity orderEntity = OrderEntity.builder()
+                .customer(customerEntity)
+                .status(OrderStatuses.CREATED)
+                .build();
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
 
-        Set<OrderTotal> orderTotalSet = new HashSet<>();
-        for (OrderTotalDTO orderTotalDTO : orderDTO.orderTotals()) {
-            OrderTotal orderTotal = convertOrderTotalDTOToEntity(orderTotalDTO);
-            orderTotal.setOrderEntity(OrderEntity.builder().id(savedOrderEntity.getId()).build());
-            if (orderTotal != null) {
-                orderTotalRepository.save(orderTotal);
-            }
-
-            orderTotalSet.add(orderTotal);
+        for (OrderedProductInfo orderedProductInfo : orderRequest.orderedProductInfo()) {
+            ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream().findFirst().get();
+            OrderTotalKey key = new OrderTotalKey();
+            key.setOrderId(savedOrderEntity.getId());
+            key.setProductId(productEntity.getId());
+            OrderTotal orderTotal = OrderTotal.builder()
+                    .id(key)
+                    .orderEntity(savedOrderEntity)
+                    .product(productEntity)
+                    .quantity(orderedProductInfo.quantity())
+                    .subtotal(BigDecimal.valueOf(productEntity.getPrice() * orderedProductInfo.quantity()))
+                    .build();
+            orderTotalRepository.save(orderTotal);
         }
-
-
 
         return conversionService.convert(savedOrderEntity, OrderDTO.class);
     }
@@ -110,15 +109,4 @@ public class OrderService {
         }
     }
 
-    public OrderTotal convertOrderTotalDTOToEntity(OrderTotalDTO source) {
-        ProductEntity productEntity = productRepository.findByName(source.productName()).stream().findFirst().get();
-        int entityQuantity = source.quantity();
-        BigDecimal entityTotal = BigDecimal.valueOf(productEntity.getPrice() * entityQuantity);
-
-        return OrderTotal.builder()
-                .product(productEntity)
-                .quantity(source.quantity())
-                .total(entityTotal)
-                .build();
-    }
 }
