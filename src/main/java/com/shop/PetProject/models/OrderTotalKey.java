@@ -19,16 +19,16 @@ public class OrderTotalKey implements Serializable {
     @Column(name = "product_id")
     private UUID productId;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderTotalKey that = (OrderTotalKey) o;
-        return Objects.equals(orderId, that.orderId) && Objects.equals(productId, that.productId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orderId, productId);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        OrderTotalKey that = (OrderTotalKey) o;
+//        return Objects.equals(orderId, that.orderId) && Objects.equals(productId, that.productId);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(orderId, productId);
+//    }
 }

@@ -1,5 +1,6 @@
 package com.shop.PetProject.controllers;
 
+import com.shop.PetProject.controllers.requests.OrderRequest;
 import com.shop.PetProject.dtos.PageResponse;
 import com.shop.PetProject.dtos.customer.CustomerDTO;
 import com.shop.PetProject.dtos.customer.CustomerFilter;
@@ -32,8 +33,8 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderDTO save(@RequestBody OrderDTO orderDTO) {
-        return orderService.save(orderDTO);
+    public OrderDTO save(@RequestBody OrderRequest orderRequest) {
+        return orderService.save(orderRequest);
     }
 
     @PatchMapping("/{id}")
