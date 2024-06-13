@@ -3,6 +3,7 @@ package com.shop.PetProject.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 @ToString
@@ -20,12 +21,9 @@ public class OrderEntity {
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private CustomerEntity customer;
-    @OneToMany(mappedBy = "orderEntity")
-//    @JoinColumn(name = "order_id")
-    private Set<OrderTotal> orderTotals;
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private OrderStatuses status;
     @Transient
-    private Integer totalPrice;
+    private BigDecimal totalPrice;
 }

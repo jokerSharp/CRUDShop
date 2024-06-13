@@ -3,12 +3,14 @@ package com.shop.PetProject.services;
 import com.querydsl.core.types.Predicate;
 import com.shop.PetProject.controllers.requests.OrderRequest;
 import com.shop.PetProject.controllers.requests.OrderedProductInfo;
+import com.shop.PetProject.controllers.responses.GetOrderResponse;
 import com.shop.PetProject.dtos.QPredicates;
 import com.shop.PetProject.dtos.order.OrderDTO;
 import com.shop.PetProject.dtos.order.OrderFilter;
 import com.shop.PetProject.dtos.order.OrderTotalDTO;
 import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
 import com.shop.PetProject.exceptions.order.OrderNotFoundException;
+import com.shop.PetProject.exceptions.product.ProductNotFoundException;
 import com.shop.PetProject.models.*;
 import com.shop.PetProject.repositories.customer.CustomerRepository;
 import com.shop.PetProject.repositories.order.OrderRepository;
@@ -21,9 +23,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
+import static com.shop.PetProject.utils.builders.OrderTotalKeyBuilder.getOrderTotalKey;
 
 @Service
 @Transactional(readOnly = true)
@@ -57,31 +63,34 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDTO save(OrderRequest orderRequest) {
+    public GetOrderResponse save(OrderRequest orderRequest) {
         CustomerEntity customerEntity = customerRepository.findById(orderRequest.customerId())
                 .orElseThrow(() -> new CustomerNotFoundException("Customer is not found"));
+
         OrderEntity orderEntity = OrderEntity.builder()
                 .customer(customerEntity)
                 .status(OrderStatuses.CREATED)
                 .build();
         OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
 
+        BigDecimal total = BigDecimal.ZERO;
         for (OrderedProductInfo orderedProductInfo : orderRequest.orderedProductInfo()) {
-            ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream().findFirst().get();
-            OrderTotalKey key = new OrderTotalKey();
-            key.setOrderId(savedOrderEntity.getId());
-            key.setProductId(productEntity.getId());
+            ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream()
+                    .findFirst().orElseThrow(() -> new ProductNotFoundException("Product is not found"));
             OrderTotal orderTotal = OrderTotal.builder()
-                    .id(key)
+                    .id(getOrderTotalKey(savedOrderEntity, productEntity))
                     .orderEntity(savedOrderEntity)
                     .product(productEntity)
                     .quantity(orderedProductInfo.quantity())
                     .subtotal(BigDecimal.valueOf(productEntity.getPrice() * orderedProductInfo.quantity()))
                     .build();
             orderTotalRepository.save(orderTotal);
+            total = total.add(orderTotal.getSubtotal());
         }
 
-        return conversionService.convert(savedOrderEntity, OrderDTO.class);
+        savedOrderEntity.setTotalPrice(total);
+
+        return conversionService.convert(savedOrderEntity, GetOrderResponse.class);
     }
 
     @Transactional
