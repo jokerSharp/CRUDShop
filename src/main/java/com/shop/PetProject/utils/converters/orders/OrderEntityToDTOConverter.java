@@ -7,18 +7,10 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrderEntityToDTOConverter implements Converter<OrderEntity, OrderDTO> {
-//    private final ConversionService conversionService;
-//
-//    public OrderEntityToDTOConverter(ConversionService conversionService) {
-//        this.conversionService = conversionService;
-//    }
 
     @Override
     public OrderDTO convert(OrderEntity source) {
         return OrderDTO.builder()
-//                .products(source.getProducts().stream()
-//                        .map(productEntity -> conversionService.convert(productEntity, ProductDTO.class))
-//                        .collect(Collectors.toSet()))
                 .id(source.getId())
                 .customerId(source.getCustomer().getId())
                 .status(source.getStatus())

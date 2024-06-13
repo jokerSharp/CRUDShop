@@ -1,6 +1,7 @@
 package com.shop.PetProject.controllers;
 
 import com.shop.PetProject.controllers.requests.OrderRequest;
+import com.shop.PetProject.controllers.responses.GetOrderResponse;
 import com.shop.PetProject.dtos.PageResponse;
 import com.shop.PetProject.dtos.customer.CustomerDTO;
 import com.shop.PetProject.dtos.customer.CustomerFilter;
@@ -33,7 +34,7 @@ public class OrderController {
     }
 
     @PostMapping
-    public OrderDTO save(@RequestBody OrderRequest orderRequest) {
+    public GetOrderResponse save(@RequestBody OrderRequest orderRequest) {
         return orderService.save(orderRequest);
     }
 
