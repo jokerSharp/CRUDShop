@@ -69,28 +69,26 @@ public class OrderService {
 
         OrderEntity orderEntity = OrderEntity.builder()
                 .customer(customerEntity)
+                .totalPrice(BigDecimal.ZERO)
                 .status(OrderStatuses.CREATED)
                 .build();
-        OrderEntity savedOrderEntity = orderRepository.save(orderEntity);
+        orderEntity = orderRepository.save(orderEntity);
 
-        BigDecimal total = BigDecimal.ZERO;
         for (OrderedProductInfo orderedProductInfo : orderRequest.orderedProductInfo()) {
             ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream()
                     .findFirst().orElseThrow(() -> new ProductNotFoundException("Product is not found"));
             OrderTotal orderTotal = OrderTotal.builder()
-                    .id(getOrderTotalKey(savedOrderEntity, productEntity))
-                    .orderEntity(savedOrderEntity)
+                    .id(getOrderTotalKey(orderEntity, productEntity))
+                    .orderEntity(orderEntity)
                     .product(productEntity)
                     .quantity(orderedProductInfo.quantity())
                     .subtotal(BigDecimal.valueOf(productEntity.getPrice() * orderedProductInfo.quantity()))
                     .build();
             orderTotalRepository.save(orderTotal);
-            total = total.add(orderTotal.getSubtotal());
+            orderEntity.setTotalPrice(orderEntity.getTotalPrice().add(orderTotal.getSubtotal()));
         }
 
-        savedOrderEntity.setTotalPrice(total);
-
-        return conversionService.convert(savedOrderEntity, GetOrderResponse.class);
+        return conversionService.convert(orderEntity, GetOrderResponse.class);
     }
 
     @Transactional
