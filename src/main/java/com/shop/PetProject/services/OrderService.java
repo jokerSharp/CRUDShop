@@ -7,8 +7,8 @@ import com.shop.PetProject.controllers.responses.GetOrderResponse;
 import com.shop.PetProject.dtos.QPredicates;
 import com.shop.PetProject.dtos.order.OrderDTO;
 import com.shop.PetProject.dtos.order.OrderFilter;
-import com.shop.PetProject.dtos.order.OrderTotalDTO;
 import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
+import com.shop.PetProject.exceptions.order.OrderIsNotCreatedException;
 import com.shop.PetProject.exceptions.order.OrderNotFoundException;
 import com.shop.PetProject.exceptions.product.ProductNotFoundException;
 import com.shop.PetProject.models.*;
@@ -23,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
 import static com.shop.PetProject.utils.builders.OrderTotalKeyBuilder.getOrderTotalKey;
@@ -77,6 +74,18 @@ public class OrderService {
         for (OrderedProductInfo orderedProductInfo : orderRequest.orderedProductInfo()) {
             ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream()
                     .findFirst().orElseThrow(() -> new ProductNotFoundException("Product is not found"));
+
+            if (productEntity.getQuantity() >= orderedProductInfo.quantity()) {
+                productEntity.setQuantity(productEntity.getQuantity() - orderedProductInfo.quantity());
+            } else {
+                throw new OrderIsNotCreatedException(
+                        "Order is not created. Required %s quantity is: %d".formatted(
+                                orderedProductInfo.productName(),
+                                (orderedProductInfo.quantity() - productEntity.getQuantity())
+                        )
+                );
+            }
+
             OrderTotal orderTotal = OrderTotal.builder()
                     .id(getOrderTotalKey(orderEntity, productEntity))
                     .orderEntity(orderEntity)
