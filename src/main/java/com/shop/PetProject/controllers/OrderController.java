@@ -39,8 +39,8 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}")
-    public OrderDTO update(@PathVariable(name = "id") long id, @RequestBody OrderDTO orderDTO) {
-        return orderService.update(id, orderDTO);
+    public GetOrderResponse update(@PathVariable(name = "id") long id, @RequestBody OrderRequest orderRequest) {
+        return orderService.update(id, orderRequest);
     }
 
     @DeleteMapping("/{id}")

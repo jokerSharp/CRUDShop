@@ -23,7 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
 import static com.shop.PetProject.utils.builders.OrderTotalKeyBuilder.getOrderTotalKey;
@@ -73,7 +75,8 @@ public class OrderService {
 
         for (OrderedProductInfo orderedProductInfo : orderRequest.orderedProductInfo()) {
             ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream()
-                    .findFirst().orElseThrow(() -> new ProductNotFoundException("Product is not found"));
+                    .findFirst()
+                    .orElseThrow(() -> new ProductNotFoundException("Product is not found"));
 
             if (productEntity.getQuantity() >= orderedProductInfo.quantity()) {
                 productEntity.setQuantity(productEntity.getQuantity() - orderedProductInfo.quantity());
@@ -101,18 +104,49 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDTO update(long id, OrderDTO orderDTO) {
-        Optional<OrderEntity> orderEntity = orderRepository.findById(id);
-        if (orderEntity.isPresent()) {
-            OrderEntity orderEntityToUpdate = conversionService.convert(orderDTO, OrderEntity.class);
-            orderEntityToUpdate.setId(id);
-            Optional<CustomerEntity> customerEntity = customerRepository.findById(orderDTO.customerId());
-            customerEntity.ifPresent(orderEntityToUpdate::setCustomer);
-            OrderEntity updatedOrderEntity = orderRepository.save(orderEntityToUpdate);
-            return conversionService.convert(updatedOrderEntity, OrderDTO.class);
-        } else {
-            throw new OrderNotFoundException("Order is not found");
+    public GetOrderResponse update(long id, OrderRequest orderRequest) {
+        OrderEntity orderEntity = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order is not found"));
+
+        for (OrderedProductInfo orderedProductInfo : orderRequest.orderedProductInfo()) {
+            ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream()
+                    .findFirst()
+                    .orElseThrow(() -> new ProductNotFoundException("Product is not found"));
+
+            if (productEntity.getQuantity() >= orderedProductInfo.quantity()) {
+                productEntity.setQuantity(productEntity.getQuantity() - orderedProductInfo.quantity());
+            } else {
+                throw new OrderIsNotCreatedException(
+                        "Order is not updated. Required %s quantity is: %d".formatted(
+                                orderedProductInfo.productName(),
+                                (orderedProductInfo.quantity() - productEntity.getQuantity())
+                        )
+                );
+            }
+
+            OrderTotalKey key = getOrderTotalKey(orderEntity, productEntity);
+            Optional<OrderTotal> optionalOrderTotal = orderTotalRepository.findById(key);
+            OrderTotal orderTotal;
+
+            if (optionalOrderTotal.isPresent()) {
+                orderTotal = optionalOrderTotal.get();
+                orderTotal.setQuantity(orderTotal.getQuantity() + orderedProductInfo.quantity());
+                orderTotal.setSubtotal(BigDecimal.valueOf(productEntity.getPrice() * orderedProductInfo.quantity()));
+            } else {
+                orderTotal = OrderTotal.builder()
+                        .id(getOrderTotalKey(orderEntity, productEntity))
+                        .orderEntity(orderEntity)
+                        .product(productEntity)
+                        .quantity(orderedProductInfo.quantity())
+                        .subtotal(BigDecimal.valueOf(productEntity.getPrice() * orderedProductInfo.quantity()))
+                        .build();
+            }
+
+
+            orderTotalRepository.save(orderTotal);
+            orderEntity.setTotalPrice(orderEntity.getTotalPrice().add(orderTotal.getSubtotal()));
         }
+
+        return conversionService.convert(orderEntity, GetOrderResponse.class);
     }
 
     @Transactional

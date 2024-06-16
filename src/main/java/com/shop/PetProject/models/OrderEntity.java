@@ -24,6 +24,6 @@ public class OrderEntity {
     @Column(name = "status")
     @Enumerated(EnumType.ORDINAL)
     private OrderStatuses status;
-    @Transient
+    @Column(name = "total_price")
     private BigDecimal totalPrice;
 }
