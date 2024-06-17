@@ -26,6 +26,7 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
 import static com.shop.PetProject.utils.builders.OrderTotalKeyBuilder.getOrderTotalKey;
@@ -105,7 +106,8 @@ public class OrderService {
 
     @Transactional
     public GetOrderResponse update(long id, OrderRequest orderRequest) {
-        OrderEntity orderEntity = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException("Order is not found"));
+        OrderEntity orderEntity = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException("Order is not found"));
 
         for (OrderedProductInfo orderedProductInfo : orderRequest.orderedProductInfo()) {
             ProductEntity productEntity = productRepository.findByName(orderedProductInfo.productName()).stream()
@@ -141,7 +143,6 @@ public class OrderService {
                         .build();
             }
 
-
             orderTotalRepository.save(orderTotal);
             orderEntity.setTotalPrice(orderEntity.getTotalPrice().add(orderTotal.getSubtotal()));
         }
@@ -151,12 +152,25 @@ public class OrderService {
 
     @Transactional
     public void delete(long id) {
-        Optional<OrderEntity> orderEntity = orderRepository.findById(id);
-        if (orderEntity.isPresent()) {
-            orderRepository.deleteById(id);
-        } else {
-            throw new OrderNotFoundException("Order is not found");
+        OrderEntity orderEntity = orderRepository.findById(id)
+                .orElseThrow(() -> new OrderNotFoundException("Order is not found"));
+        if (orderEntity.getStatus().equals(OrderStatuses.CANCELLED)) {
+            throw new OrderNotFoundException("Order is already cancelled");
         }
+
+        Set<OrderTotal> orderTotalSet = orderTotalRepository.findAll().stream()
+                .filter(order -> order.getId().getOrderId().equals(id))
+                .collect(Collectors.toSet());
+
+        for (OrderTotal orderTotal : orderTotalSet) {
+            ProductEntity product = productRepository.findByName(orderTotal.getProduct().getName()).stream()
+                    .findFirst()
+                    .get();
+            product.setQuantity(product.getQuantity() + orderTotal.getQuantity());
+            orderTotalRepository.deleteById(orderTotal.getId());
+        }
+
+        orderEntity.setStatus(OrderStatuses.CANCELLED);
     }
 
 }
