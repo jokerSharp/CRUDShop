@@ -45,4 +45,8 @@ public class InputUtils {
         DecimalFormat decFormat = new DecimalFormat("#.##", decimalFormatSymbols);
         return decFormat.format(random.nextDouble() * 1000);
     }
+
+    public static String getRandomEmail() {
+        return getRandomShortString() + "@" + getRandomShortString() + ".com";
+    }
 }
