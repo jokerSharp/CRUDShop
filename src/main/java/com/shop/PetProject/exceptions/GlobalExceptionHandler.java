@@ -1,5 +1,6 @@
 package com.shop.PetProject.exceptions;
 
+import com.shop.PetProject.exceptions.customer.CustomerEmailAlreadyExistsException;
 import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
 import com.shop.PetProject.exceptions.order.OrderIsNotCreatedException;
 import com.shop.PetProject.exceptions.order.OrderNotFoundException;
@@ -51,6 +52,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({CustomerNotFoundException.class})
     private ResponseEntity<Object> handleException(CustomerNotFoundException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(getResponseBody(e.getMessage(), CustomerEntity.class));
+    }
+
+    @ExceptionHandler({CustomerEmailAlreadyExistsException.class})
+    private ResponseEntity<Object> handleException(CustomerEmailAlreadyExistsException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(getResponseBody(e.getMessage(), CustomerEntity.class));
