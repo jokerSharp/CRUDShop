@@ -34,11 +34,9 @@ public class ProductServiceTest {
     void saveProduct_validProduct_saveProduct() {
         ProductDTO productDTO = getProductDTO();
         ProductEntity productEntity = ManualConverter.convert(productDTO);
-        when(conversionService.convert(productDTO, ProductEntity.class))
-                .thenReturn(productEntity);
+        when(conversionService.convert(productDTO, ProductEntity.class)).thenReturn(productEntity);
         productService.saveProduct(productDTO);
-        verify(productRepository, times(1))
-                .save(any(ProductEntity.class));
+        verify(productRepository, times(1)).save(any(ProductEntity.class));
     }
 
     @Test

@@ -15,9 +15,21 @@ public class CustomerBuilder {
                 .build();
     }
 
+    public static CustomerDTO getInvalidCustomerDTO() {
+        return CustomerDTO.builder()
+                .email(getRandomEmail())
+                .build();
+    }
+
     public static CustomerEntity getValidCustomerEntity() {
         return CustomerEntity.builder()
                 .name(getRandomShortString())
+                .email(getRandomEmail())
+                .build();
+    }
+
+    public static CustomerEntity getInvalidCustomerEntity() {
+        return CustomerEntity.builder()
                 .email(getRandomEmail())
                 .build();
     }

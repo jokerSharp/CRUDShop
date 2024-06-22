@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import com.shop.PetProject.dtos.customer.CustomerDTO;
 import com.shop.PetProject.dtos.customer.CustomerFilter;
 import com.shop.PetProject.dtos.QPredicates;
+import com.shop.PetProject.exceptions.customer.CustomerEmailAlreadyExistsException;
 import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
 import com.shop.PetProject.models.CustomerEntity;
 import com.shop.PetProject.repositories.customer.CustomerRepository;
@@ -44,6 +45,10 @@ public class CustomerService {
 
     @Transactional
     public void save(CustomerDTO customerDTO) {
+        CustomerEntity customerEntity = conversionService.convert(customerDTO, CustomerEntity.class);
+        if (customerEntity.getName() == null) {
+            throw new CustomerEmailAlreadyExistsException("Customer name should not be empty");
+        }
         customerRepository.save(conversionService.convert(customerDTO, CustomerEntity.class));
     }
 
