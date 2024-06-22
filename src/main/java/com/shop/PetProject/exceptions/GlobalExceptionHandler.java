@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ProductNotFoundException.class})
     private ResponseEntity<Object> handleException(ProductNotFoundException e) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.NOT_FOUND)
                 .body(getResponseBody(e.getMessage(), ProductEntity.class));
     }
 
@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({CustomerNotFoundException.class})
     private ResponseEntity<Object> handleException(CustomerNotFoundException e) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.NOT_FOUND)
                 .body(getResponseBody(e.getMessage(), CustomerEntity.class));
     }
 
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({OrderNotFoundException.class})
     private ResponseEntity<Object> handleException(OrderNotFoundException e) {
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.NOT_FOUND)
                 .body(getResponseBody(e.getMessage(), OrderEntity.class));
     }
 
