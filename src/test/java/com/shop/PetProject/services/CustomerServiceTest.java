@@ -1,19 +1,27 @@
 package com.shop.PetProject.services;
 
 import com.shop.PetProject.dtos.customer.CustomerDTO;
+import com.shop.PetProject.dtos.product.ProductDTO;
 import com.shop.PetProject.exceptions.customer.CustomerEmailAlreadyExistsException;
 import com.shop.PetProject.exceptions.customer.CustomerNotFoundException;
 import com.shop.PetProject.models.CustomerEntity;
+import com.shop.PetProject.models.ProductEntity;
 import com.shop.PetProject.repositories.customer.CustomerRepository;
+import com.shop.PetProject.testUtils.converters.ManualConverter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.convert.ConversionService;
 
+import java.util.List;
+import java.util.Optional;
+
 import static com.shop.PetProject.testUtils.builders.CustomerBuilder.*;
+import static com.shop.PetProject.testUtils.builders.ProductBuilder.getProductDTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -42,6 +50,14 @@ public class CustomerServiceTest {
         CustomerDTO invalidCustomerDTO = getInvalidCustomerDTO();
         when(conversionService.convert(invalidCustomerDTO, CustomerEntity.class)).thenReturn(invalidCustomerEntity);
         Assertions.assertThrows(CustomerEmailAlreadyExistsException.class, () -> customerService.save(invalidCustomerDTO));
+    }
+
+    @Test
+    void getOne_customerExists_getCustomer() {
+        CustomerEntity validCustomerEntity = getValidCustomerEntity();
+        Mockito.when(customerRepository.findById(validCustomerEntity.getId())).thenReturn(Optional.of(validCustomerEntity));
+        customerService.getOne(validCustomerEntity.getId());
+        verify(customerRepository, times(1)).findById(anyLong());
     }
 
     @Test

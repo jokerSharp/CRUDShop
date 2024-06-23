@@ -3,8 +3,7 @@ package com.shop.PetProject.testUtils.builders;
 import com.shop.PetProject.dtos.customer.CustomerDTO;
 import com.shop.PetProject.models.CustomerEntity;
 
-import static com.shop.PetProject.testUtils.InputUtils.getRandomEmail;
-import static com.shop.PetProject.testUtils.InputUtils.getRandomShortString;
+import static com.shop.PetProject.testUtils.InputUtils.*;
 
 public class CustomerBuilder {
 
@@ -23,6 +22,7 @@ public class CustomerBuilder {
 
     public static CustomerEntity getValidCustomerEntity() {
         return CustomerEntity.builder()
+                .id(Long.valueOf(getRandomPositiveInt()))
                 .name(getRandomShortString())
                 .email(getRandomEmail())
                 .build();
