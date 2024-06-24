@@ -24,11 +24,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
+import static com.shop.PetProject.models.QOrderTotal.orderTotal;
 import static com.shop.PetProject.utils.builders.OrderTotalKeyBuilder.getOrderTotalKey;
 
 @Service
@@ -55,6 +57,13 @@ public class OrderService {
                 .build();
         return orderRepository.findAll(predicate, pageable)
                 .map(order -> conversionService.convert(order, OrderDTO.class));
+    }
+
+    public List<OrderDTO> getAllByProductName(String productName) {
+        orderRepository.findByProductName(productName).forEach(order -> conversionService.convert(order, OrderDTO.class));
+        return orderRepository.findByProductName(productName).stream()
+                .map(order -> conversionService.convert(order, OrderDTO.class))
+                .collect(Collectors.toList());
     }
 
     public OrderDTO getOne(long id) {
