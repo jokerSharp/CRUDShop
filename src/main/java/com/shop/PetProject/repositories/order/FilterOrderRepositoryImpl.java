@@ -10,6 +10,7 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 import static com.shop.PetProject.models.QOrderEntity.orderEntity;
+import static com.shop.PetProject.models.QOrderTotal.orderTotal;
 
 public class FilterOrderRepositoryImpl implements FilterOrderRepository{
 
@@ -24,6 +25,7 @@ public class FilterOrderRepositoryImpl implements FilterOrderRepository{
         Predicate predicate = QPredicates.builder()
                 .add(filter.id(), orderEntity.id::eq)
                 .add(filter.status(), orderEntity.status::eq)
+                .add(filter.productId(), orderTotal.id.productId::eq)
                 .build();
 
         return new JPAQuery<OrderEntity>(em)

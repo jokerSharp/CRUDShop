@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/order")
 public class OrderController {
@@ -26,6 +28,11 @@ public class OrderController {
         Page<OrderDTO> page = orderService.getAll(filter, pageable);
         PageResponse<OrderDTO> pageResponse = PageResponse.of(page);
         return pageResponse;
+    }
+
+    @GetMapping("/search")
+    public List<OrderDTO> pageableSearch(@RequestParam String productName) {
+        return orderService.getAllByProductName(productName);
     }
 
     @GetMapping("/{id}")
